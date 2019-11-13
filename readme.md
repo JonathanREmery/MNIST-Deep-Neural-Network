@@ -1,0 +1,1 @@
+My first deep neural network, designed to recognize pictures of handwritten digits from 0-9 from the MNIST dataset. Will also work with custom drawn images as long as they are 28x28 and are saved in the same directory as the script and named custom.png
