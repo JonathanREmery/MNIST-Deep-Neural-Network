@@ -3,8 +3,10 @@
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import os
 from keras.utils import to_categorical
 from keras.models import Sequential
+from keras.models import load_model
 from keras.layers import Dense, Activation
 from keras.datasets import mnist
 
@@ -45,9 +47,13 @@ def train(model):
 	model.fit(x_train, y_train, epochs=10, batch_size=1000, verbose=0)
 
 def main():
-	model = generateModel()
-	print("Training model...")
-	train(model)
+	if not os.path.exists('model.h5'):
+		model = generateModel()
+		print("Training model...")
+		train(model)
+		model.save('model.h5')
+	else:
+		model = load_model('model.h5')
 	print("Accuracy:", (model.evaluate(x_test, y_test, verbose=0)[1]*100))
 	for i in range(10):
 		displayImage(i, model.predict(np.array([x_test[i]])).argmax())
