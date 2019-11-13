@@ -1,6 +1,8 @@
 #!/usr/local/bin/python3
 
 import numpy as np
+import warnings
+warnings.filterwarnings('ignore',category=FutureWarning)
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import os
