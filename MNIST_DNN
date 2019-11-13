@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import os
+import cv2
 from keras.utils import to_categorical
 from keras.models import Sequential
 from keras.models import load_model
@@ -24,6 +25,7 @@ x_test /= 255.0
 y_train = to_categorical(y_train, 10)
 y_test = to_categorical(y_test, 10)
 
+
 def generateModel():
 	model = Sequential()
 	model.add(Dense(512, input_shape=(784,)))
@@ -35,8 +37,8 @@ def generateModel():
 	model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 	return model
 
-def displayImage(pic_num, guess):
-	pixels = x_test[pic_num]*255.0
+def displayImage(img, guess):
+	pixels = img*255.0
 	pixels = pixels.reshape(28, 28)
 
 	plt.title('Computer\'s guess is {label}'.format(label=guess))
@@ -45,6 +47,14 @@ def displayImage(pic_num, guess):
 
 def train(model):
 	model.fit(x_train, y_train, epochs=10, batch_size=1000, verbose=0)
+
+def loadCustomImage(path):
+	image = cv2.imread(path)
+	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+	gray = gray.reshape(784)
+	gray = gray.astype('float32')
+	gray /= 255.0
+	return gray
 
 def main():
 	if not os.path.exists('model.h5'):
@@ -55,8 +65,13 @@ def main():
 	else:
 		model = load_model('model.h5')
 	print("Accuracy:", (model.evaluate(x_test, y_test, verbose=0)[1]*100))
-	for i in range(10):
-		displayImage(i, model.predict(np.array([x_test[i]])).argmax())
+
+	if not os.path.exists('custom.png'):
+		for i in range(10):
+			displayImage(x_test[i], model.predict(np.array([x_test[i]])).argmax())
+	else:
+		x = loadCustomImage('custom.png')
+		displayImage(x, model.predict(np.array([x])).argmax())
 
 
 if __name__ == '__main__':
